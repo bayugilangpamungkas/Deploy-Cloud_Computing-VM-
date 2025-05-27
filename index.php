@@ -44,7 +44,7 @@ if (isset($_POST['add'])) {
             throw new Exception("Invalid email format.");
         }
 
-        $stmt = $conn->prepare("INSERT INTO contacts (name, phone, email, address, company, category, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+        $stmt = $conn->prepare("INSERT INTO contacts (name, phone, email, address, company, category) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
@@ -213,6 +213,21 @@ try {
     <title>Contact Manager</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -220,107 +235,122 @@ try {
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--dark-color);
+            line-height: 1.6;
             padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 30px;
             text-align: center;
             position: relative;
+            overflow: hidden;
         }
 
         .header::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.1"/><circle cx="10" cy="90" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(30deg);
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             position: relative;
-            z-index: 1;
+            font-weight: 700;
         }
 
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
             position: relative;
-            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(255, 255, 255, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
             padding: 20px;
+            background: white;
             margin: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .stat-item {
             text-align: center;
-            flex: 1;
+            padding: 15px;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            color: #667eea;
+            color: var(--primary-color);
+            margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
+            color: var(--gray-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .search-section {
             padding: 20px;
-            background: #f8f9ff;
-            border-bottom: 1px solid #e1e5f0;
+            background: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .search-box {
             position: relative;
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         .search-input {
             width: 100%;
             padding: 15px 50px 15px 20px;
-            border: 2px solid #e1e5f0;
-            border-radius: 25px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
         .search-icon {
@@ -328,7 +358,7 @@ try {
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #667eea;
+            color: var(--primary-color);
             font-size: 18px;
         }
 
@@ -337,11 +367,12 @@ try {
         }
 
         .form-container {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            background: white;
             padding: 30px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             margin-bottom: 30px;
-            border: 1px solid #e1e5f0;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: var(--box-shadow);
         }
 
         .form-grid {
@@ -359,24 +390,24 @@ try {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--dark-color);
             font-size: 14px;
         }
 
         .form-control {
             width: 100%;
             padding: 15px;
-            border: 2px solid #e1e5f0;
-            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             background: white;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
         .form-actions {
@@ -384,54 +415,60 @@ try {
             gap: 15px;
             align-items: center;
             margin-top: 20px;
+            justify-content: flex-end;
         }
 
         .btn {
             padding: 12px 25px;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
         }
 
         .btn-secondary {
-            background: #6c757d;
-            color: white;
+            background: white;
+            color: var(--gray-color);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
+            background: #f8f9fa;
             transform: translateY(-2px);
         }
 
         .contacts-table {
             background: white;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
         }
 
         .table-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 20px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .table-body {
@@ -444,14 +481,17 @@ try {
             grid-template-columns: 2fr 1.5fr 2fr 1.5fr 1fr 1fr 120px;
             gap: 15px;
             padding: 20px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             align-items: center;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .contact-row:last-child {
+            border-bottom: none;
         }
 
         .contact-row:hover {
-            background: #f8f9ff;
-            transform: translateX(5px);
+            background: rgba(67, 97, 238, 0.05);
         }
 
         .contact-info {
@@ -464,34 +504,37 @@ try {
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .contact-details h4 {
             margin: 0;
-            color: #333;
+            color: var(--dark-color);
             font-size: 16px;
+            font-weight: 600;
         }
 
         .contact-meta {
             font-size: 12px;
-            color: #666;
+            color: var(--gray-color);
             margin-top: 2px;
         }
 
         .category-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 4px 12px;
-            border-radius: 15px;
+            border-radius: 50px;
             font-size: 12px;
             font-weight: 600;
+            display: inline-block;
         }
 
         .action-buttons {
@@ -502,56 +545,70 @@ try {
         .btn-sm {
             padding: 8px 12px;
             font-size: 12px;
-            border-radius: 20px;
+            border-radius: 50px;
+            box-shadow: none;
         }
 
         .btn-edit {
-            background: #28a745;
+            background: var(--success-color);
             color: white;
         }
 
         .btn-edit:hover {
-            background: #218838;
+            background: #3aa8d8;
+            transform: translateY(-2px);
         }
 
         .btn-delete {
-            background: #dc3545;
+            background: var(--danger-color);
             color: white;
         }
 
         .btn-delete:hover {
-            background: #c82333;
+            background: #e5177e;
+            transform: translateY(-2px);
         }
 
         .notification {
             padding: 15px 20px;
             margin: 20px;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             font-weight: 600;
             text-align: center;
             animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--box-shadow);
         }
 
         .notification.success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, var(--success-color), #3aa8d8);
             color: white;
         }
 
         .notification.error {
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            background: linear-gradient(135deg, var(--danger-color), #e5177e);
             color: white;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #666;
+            color: var(--gray-color);
         }
 
         .empty-state i {
             font-size: 4rem;
-            color: #ddd;
+            color: rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
         }
 
         @keyframes slideIn {
@@ -566,19 +623,43 @@ try {
             }
         }
 
+        @keyframes slideOut {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .contact-row {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto auto;
+                row-gap: 15px;
+            }
+
+            .contact-info {
+                grid-column: 1 / span 3;
+            }
+
+            .action-buttons {
+                grid-column: 1 / span 3;
+                justify-content: flex-end;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
-                border-radius: 15px;
+                border-radius: 10px;
             }
 
             .header h1 {
                 font-size: 2rem;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-                gap: 15px;
             }
 
             .form-grid {
@@ -587,8 +668,8 @@ try {
 
             .contact-row {
                 grid-template-columns: 1fr;
+                padding: 15px;
                 gap: 10px;
-                text-align: left;
             }
 
             .contact-row>div {
@@ -600,8 +681,29 @@ try {
             .contact-row>div::before {
                 content: attr(data-label);
                 font-weight: bold;
-                color: #666;
-                min-width: 80px;
+                color: var(--gray-color);
+                margin-right: 15px;
+                flex: 1;
+            }
+
+            .contact-row>div>* {
+                flex: 2;
+                text-align: right;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .contact-info::before {
+                content: none;
+            }
+
+            .action-buttons {
+                justify-content: center;
+                margin-top: 10px;
             }
         }
 
@@ -609,9 +711,9 @@ try {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255, 255, 255, .3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
 
@@ -627,6 +729,7 @@ try {
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-address-book"></i> Contact Manager</h1>
+            <p>Manage your contacts efficiently with this powerful tool</p>
         </div>
 
         <div class="stats-bar">
@@ -641,6 +744,10 @@ try {
             <div class="stat-item">
                 <div class="stat-number"><?php echo empty($search) ? $totalContacts : count($contacts); ?></div>
                 <div class="stat-label">Displayed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><?php echo date('Y'); ?></div>
+                <div class="stat-label">Current Year</div>
             </div>
         </div>
 
@@ -728,14 +835,16 @@ try {
 
             <div class="contacts-table">
                 <div class="table-header">
-                    <i class="fas fa-list"></i> Contact List
+                    <div>
+                        <i class="fas fa-list"></i> Contact List
+                    </div>
                     <?php if (!empty($search)): ?>
-                        <span style="float: right; font-weight: normal;">
-                            Search: "<?php echo htmlspecialchars($search); ?>"
-                            <a href="index.php" style="color: #fff; margin-left: 10px;">
-                                <i class="fas fa-times"></i>
+                        <div style="font-weight: normal;">
+                            Search results for: "<?php echo htmlspecialchars($search); ?>"
+                            <a href="index.php" style="color: white; margin-left: 10px;">
+                                <i class="fas fa-times"></i> Clear
                             </a>
-                        </span>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -743,7 +852,7 @@ try {
                     <?php if (!empty($contacts)): ?>
                         <?php foreach ($contacts as $contact): ?>
                             <div class="contact-row">
-                                <div class="contact-info">
+                                <div class="contact-info" data-label="Contact:">
                                     <div class="avatar">
                                         <?php echo strtoupper(substr($contact['name'], 0, 1)); ?>
                                     </div>
@@ -774,28 +883,18 @@ try {
                                     <?php if (!empty($contact['category'])): ?>
                                         <span class="category-badge"><?php echo htmlspecialchars($contact['category']); ?></span>
                                     <?php else: ?>
-                                        <span style="color: #999;">-</span>
+                                        <span style="color: var(--gray-color);">-</span>
                                     <?php endif; ?>
                                 </div>
 
-                                <div data-label="Added:">
-                                    <?php
-                                    if (!empty($contact['created_at'])) {
-                                        echo date('M j, Y', strtotime($contact['created_at']));
-                                    } else {
-                                        echo '-';
-                                    }
-                                    ?>
-                                </div>
-
                                 <div class="action-buttons">
-                                    <a href="?edit=<?php echo $contact['id']; ?>" class="btn btn-edit btn-sm">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="?edit=<?php echo $contact['id']; ?>" class="btn btn-edit btn-sm" title="Edit">
+                                        <i class="fas fa-edit"></i> Edit
                                     </a>
                                     <a href="?delete=<?php echo $contact['id']; ?>"
                                         class="btn btn-delete btn-sm"
-                                        onclick="return confirm('Are you sure you want to delete this contact?')">
-                                        <i class="fas fa-trash"></i>
+                                        onclick="return confirm('Are you sure you want to delete this contact?')" title="Delete">
+                                        <i class="fas fa-trash"></i> Delete
                                     </a>
                                 </div>
                             </div>
@@ -824,21 +923,13 @@ try {
             }
         });
 
-        // Add slideOut animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideOut {
-                from {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateY(-20px);
-                    opacity: 0;
-                }
+        // Focus on search input when pressing Ctrl+K
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.querySelector('.search-input').focus();
             }
-        `;
-        document.head.appendChild(style);
+        });
 
         // Smooth scroll for form submission
         if (window.location.hash === '#form') {
