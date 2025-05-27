@@ -6,7 +6,15 @@
 ![](img.png) <br>
 
 ## Screenshot BAYU GILANG<br>
-![6YCfgAMDLP](https://github.com/user-attachments/assets/3866e752-4ef4-49d6-8822-effdc4c918b2) <br>
+![chrome_cO7AI7EEv3](https://github.com/user-attachments/assets/5488cd7f-c93a-44e5-9c17-cc5ccc034892) <br>
+
+![chrome_QE7m44H19e](https://github.com/user-attachments/assets/a68e71ea-318e-4821-b266-96cc4c733d0d) <br>
+![chrome_PaFoaulnRL](https://github.com/user-attachments/assets/74d92f24-0a80-487e-8889-d219102bf64b) <br>
+![chrome_UfB076xRH5](https://github.com/user-attachments/assets/1c6cf1c0-1f40-4c26-887c-7d3d8a84e53d) <br>
+![chrome_0l9Gc1i7qA](https://github.com/user-attachments/assets/516de2ad-e508-47b5-9679-c2eff00e2709) <br>
+
+
+
 
 
 ## Installation
