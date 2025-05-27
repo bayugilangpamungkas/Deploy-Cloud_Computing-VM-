@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="55ecd473-48e9-4ba5-a45e-0bf23e836f25" name="VM-1@GCP" url="http://34.101.236.158">
+        <fileTransfer rootFolder="/var/www/html" host="34.101.236.158" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
