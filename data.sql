@@ -10,7 +10,10 @@ CREATE TABLE IF NOT EXISTS contacts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     phone VARCHAR(20) NOT NULL,
-    email VARCHAR(50) NOT NULL
+    email VARCHAR(50) NOT NULL,
+    address VARCHAR(100) NOT NULL,
+    company VARCHAR(50) NOT NULL,
+    category VARCHAR(50) NOT NULL,
 );
 
 -- CREATE USER
